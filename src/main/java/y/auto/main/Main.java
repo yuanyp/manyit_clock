@@ -3,6 +3,7 @@ package y.auto.main;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +30,9 @@ import y.auto.util.HttpUtil;
 
 public class Main {
 	
-	public static String basePath = "https://demo.many-it.com/demooa/";
+	public static String basePath = "https://oa.many-it.com/MANYIT/";
+	
+	public static String defaultBasePath = "https://oa.many-it.com/MANYIT/";
 	
 	public static String url = basePath + "Login.do?_funccode_=C_Login";
 	
@@ -125,18 +128,21 @@ public class Main {
 			System.out.print("Password: ");
 			pass = scanner.nextLine();	
 		}while(StringUtils.isBlank(pass));
-		do {
-			System.out.print("URL: ");
-			basePath = scanner.nextLine();
-		}while(StringUtils.isBlank(basePath));
+		System.out.print("URL: ");
+		basePath = scanner.nextLine();
+		if(StringUtils.isBlank(basePath)) {
+			basePath = defaultBasePath;
+		}
+		System.out.println(basePath);
 		//登录
 		if(!Login(name,pass)) {
 			System.out.println("登录失败");
 			return;
 		}
 		System.out.println("登录成功（验证用户名密码通过）..");
+//		postClock();
 		//[0 * * * * ?] 每1分钟触发一次
-		runJob("0 0/1 8,18 * * ?");//[0 0/1 8,18 * * ?]在每天上午8点到8:55期间和下午6点到6:55期间的每1分钟触发
+		runJob("0 0/1 8,18 * * ?");//[]在每天上午8点到8:55期间和下午6点到6:55期间的每1分钟触发
 	}
 	
 	/**
@@ -189,6 +195,9 @@ public class Main {
 		}else {
 			System.out.println("接口返回信息：" + info);
 			String code = obj2Str(info.get("_returncode_"));
+			if(StringUtils.isBlank(code)) {
+				code = obj2Str(info.get("errcode"));
+			}
 			return "0".equals(code) || "0.0".equals(code) || info.containsKey("LOGINNAME");
 		}
 	}
@@ -212,13 +221,20 @@ public class Main {
 	 * @return
 	 */
 	public static boolean postClock() {
-		System.out.println("发送请求执行打卡,当前时间" + getNow());
-		String params = "action=signwork&_page_request_=1&_records_perpage_=999";
-		String url = basePath + "AsyncAction.do?_funccode_=C_KQ_GetUserApplyNo";
-		String ret = HttpUtil.send("post", url, params, requestPropertys, HttpUtil.ENC_UTF_8, cookieManager);
-		Gson gson = new Gson();
-		Map<String,Object> info = gson.fromJson(ret, Map.class);
-		return success(info);
+		try {
+			System.out.println("发送请求执行打卡,当前时间" + getNow());
+			String url = basePath + "mobile/kq/mobilesignwork";
+			String addr = URLEncoder.encode("中国上海市长宁区长宁路1027号","utf-8");
+			String param = "mobileinfo={\"type\":\"gps\",\"longitude\":121.42449600000000,\"latitude\":31.22365500000000,\"address\":\""+addr+"\",\"machine_key\":\"ac145e085f2a896\"}";
+			requestPropertys.put("user-agent", "MANYIT-MobileOA-Android");
+			String ret = HttpUtil.send("post", url, param, requestPropertys, HttpUtil.ENC_UTF_8, cookieManager);
+			Gson gson = new Gson();
+			Map<String,Object> info = gson.fromJson(ret, Map.class);
+			return success(info);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/**

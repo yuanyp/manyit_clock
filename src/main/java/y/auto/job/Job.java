@@ -1,5 +1,8 @@
 package y.auto.job;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -12,6 +15,11 @@ public class Job implements org.quartz.Job{
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		System.out.println("机器人开始执行...【"+Main.getNow()+"】");
+		String nowDate = Main.getNowDate();
+		int week = dayForWeek(nowDate);
+		if(week == 6 || week == 7) {
+			System.out.println("礼拜6-7不执行打卡【"+nowDate+"】");			
+		}
 		String start = Main.getRandom(20) + "";
 		String end = Main.getRandom(15) + "";
 		if(start.length() < 2) {
@@ -54,4 +62,30 @@ public class Job implements org.quartz.Job{
 		}
 	}
 
+	/**
+	 * 判断当前日期是星期几
+	 * 
+	 * @param pTime
+	 *            修要判断的时间
+	 * @return dayForWeek 判断结果
+	 * @Exception 发生异常
+	 */
+	public static int dayForWeek(String pTime) {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			Calendar c = Calendar.getInstance();
+			c.setTime(format.parse(pTime));
+			int dayForWeek = 0;
+			if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+				dayForWeek = 7;
+			} else {
+				dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+			}
+			return dayForWeek;
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
 }

@@ -25,14 +25,13 @@ import com.google.gson.Gson;
 import y.auto.entity.ClockInfo;
 import y.auto.entity.UserInfo;
 import y.auto.job.Job;
+import y.auto.util.Config;
 import y.auto.util.CookieManager;
 import y.auto.util.HttpUtil;
 
 public class Main {
 	
-	public static String basePath = "https://oa.many-it.com/MANYIT/";
-	
-	public static String defaultBasePath = "https://oa.many-it.com/MANYIT/";
+	public static String basePath = Config.getInstance().getConfig("base-path") + "";
 	
 	public static String url = basePath + "Login.do?_funccode_=C_Login";
 	
@@ -129,11 +128,6 @@ public class Main {
 			pass = scanner.nextLine();	
 		}while(StringUtils.isBlank(pass));
 		System.out.print("URL: ");
-		basePath = scanner.nextLine();
-		if(StringUtils.isBlank(basePath)) {
-			basePath = defaultBasePath;
-		}
-		System.out.println(basePath);
 		//登录
 		if(!Login(name,pass)) {
 			System.out.println("登录失败");
@@ -142,7 +136,8 @@ public class Main {
 		System.out.println("登录成功（验证用户名密码通过）..");
 //		postClock();
 		//[0 * * * * ?] 每1分钟触发一次
-		runJob("0 0/1 8,18 * * ?");//[]在每天上午8点到8:55期间和下午6点到6:55期间的每1分钟触发
+		String quartzCon = Config.getInstance().getConfig("quartz-con") + "";
+		runJob(quartzCon);//[]在每天上午8点到8:55期间和下午6点到6:55期间的每1分钟触发
 	}
 	
 	/**
@@ -165,8 +160,11 @@ public class Main {
 		return sdf.format(new Date());
 	}
 	
-	public static String getNowDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+	public static String getNowDate(String format) {
+		if(org.apache.commons.lang.StringUtils.isBlank(format)) {
+			format = "YYYY-MM-dd";
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(new Date());
 	}
 	
@@ -180,8 +178,9 @@ public class Main {
 	 */
 	public static void logout() {
 		System.out.println("执行退出...");
-		String url = basePath + "Logout.do?_funccode_=C_Logout";
+		String url = basePath + "Logout.do?_funccode_=C_Logout&async=true";
 		String ret = HttpUtil.send("get", url, "", requestPropertys, HttpUtil.ENC_UTF_8, cookieManager);
+		System.out.println("退出返回：" + ret);
 	}
 	
 	/**
@@ -224,9 +223,14 @@ public class Main {
 		try {
 			System.out.println("发送请求执行打卡,当前时间" + getNow());
 			String url = basePath + "mobile/kq/mobilesignwork";
-			String addr = URLEncoder.encode("中国上海市长宁区长宁路1027号","utf-8");
-			String param = "mobileinfo={\"type\":\"gps\",\"longitude\":121.42449600000000,\"latitude\":31.22365500000000,\"address\":\""+addr+"\",\"machine_key\":\"ac145e085f2a896\"}";
-			requestPropertys.put("user-agent", "MANYIT-MobileOA-Android");
+			String address = Config.getInstance().getConfig("address") + "";
+			String longitude = Config.getInstance().getConfig("longitude") + "";
+			String latitude = Config.getInstance().getConfig("latitude") + "";
+			String machine_key = Config.getInstance().getConfig("machine_key") + "";
+			String addr = URLEncoder.encode(address,"utf-8");
+			String param = "mobileinfo={\"type\":\"gps\",\"longitude\":"+longitude+",\"latitude\":"+latitude+",\"address\":\""+addr+"\",\"machine_key\":"+machine_key+"}";
+			String userAgent = Config.getInstance().getConfig("user-agent") + "";
+			requestPropertys.put("user-agent", userAgent);
 			String ret = HttpUtil.send("post", url, param, requestPropertys, HttpUtil.ENC_UTF_8, cookieManager);
 			Gson gson = new Gson();
 			Map<String,Object> info = gson.fromJson(ret, Map.class);

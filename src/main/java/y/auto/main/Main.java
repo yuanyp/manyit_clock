@@ -228,7 +228,7 @@ public class Main {
 			String latitude = Config.getInstance().getConfig("latitude") + "";
 			String machine_key = Config.getInstance().getConfig("machine_key") + "";
 			String addr = URLEncoder.encode(address,"utf-8");
-			String param = "mobileinfo={\"type\":\"gps\",\"longitude\":"+longitude+",\"latitude\":"+latitude+",\"address\":\""+addr+"\",\"machine_key\":"+machine_key+"}";
+			String param = "mobileinfo={\"type\":\"gps\",\"longitude\":\""+longitude+"\",\"latitude\":\""+latitude+"\",\"address\":\""+addr+"\",\"machine_key\":\""+machine_key+"\"}";
 			String userAgent = Config.getInstance().getConfig("user-agent") + "";
 			requestPropertys.put("user-agent", userAgent);
 			String ret = HttpUtil.send("post", url, param, requestPropertys, HttpUtil.ENC_UTF_8, cookieManager);

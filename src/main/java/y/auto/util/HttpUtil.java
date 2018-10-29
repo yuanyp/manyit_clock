@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -117,8 +118,8 @@ public class HttpUtil{
 	 */
 	public static String send(String method, String url, String params, Map<String,Object> requestPropertys,String encode,CookieManager cookieManager) {
 		StringBuilder result = new StringBuilder();
-		PrintWriter out = null;
 		BufferedReader in = null;
+		OutputStreamWriter out = null;
 		try{
 			if(method.equalsIgnoreCase(GET) && StringUtils.isNotBlank(params)){
 				if(url.contains("?")){
@@ -149,6 +150,7 @@ public class HttpUtil{
 			conn.setRequestProperty("connection", "Keep-Alive");
 			conn.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=" + encode);
+			conn.setRequestProperty("Accept-Charset", encode);
 			// 设置通用的自定义属性
 			if(requestPropertys != null && !requestPropertys.isEmpty()){
 				Iterator<String> it = requestPropertys.keySet().iterator();
@@ -176,9 +178,9 @@ public class HttpUtil{
 				conn.setConnectTimeout(10000);
 				conn.setDoInput(true);
 				// 获取URLConnection对象对应的输出流
-				out = new PrintWriter(conn.getOutputStream());
+				out = new OutputStreamWriter(conn.getOutputStream(), encode); 
 				// 发送请求参数
-				out.print(params); // params.toString().getBytes("UTF-8");
+				out.write(params);
 				// flush输出流的缓冲
 				out.flush();
 				// 定义BufferedReader输入流来读取URL的响应

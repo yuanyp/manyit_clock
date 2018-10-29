@@ -224,10 +224,11 @@ public class Main {
 			System.out.println("发送请求执行打卡,当前时间" + getNow());
 			String url = basePath + "mobile/kq/mobilesignwork";
 			String address = Config.getInstance().getConfig("address") + "";
+			System.out.println(address);
 			String longitude = Config.getInstance().getConfig("longitude") + "";
 			String latitude = Config.getInstance().getConfig("latitude") + "";
 			String machine_key = Config.getInstance().getConfig("machine_key") + "";
-			String addr = URLEncoder.encode(address,"utf-8");
+			String addr = address;
 			String param = "mobileinfo={\"type\":\"gps\",\"longitude\":\""+longitude+"\",\"latitude\":\""+latitude+"\",\"address\":\""+addr+"\",\"machine_key\":\""+machine_key+"\"}";
 			String userAgent = Config.getInstance().getConfig("user-agent") + "";
 			requestPropertys.put("user-agent", userAgent);

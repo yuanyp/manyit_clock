@@ -3,7 +3,6 @@ package y.auto.main;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -228,8 +227,15 @@ public class Main {
 			String longitude = Config.getInstance().getConfig("longitude") + "";
 			String latitude = Config.getInstance().getConfig("latitude") + "";
 			String machine_key = Config.getInstance().getConfig("machine_key") + "";
+			String kq_type = Config.getInstance().getConfig("kq_type") + "";
+			String mac = Config.getInstance().getConfig("mac") + "";
 			String addr = address;
-			String param = "mobileinfo={\"type\":\"gps\",\"longitude\":\""+longitude+"\",\"latitude\":\""+latitude+"\",\"address\":\""+addr+"\",\"machine_key\":\""+machine_key+"\"}";
+			String param = "mobileinfo={\"type\":\""+kq_type+"\""
+					+ ",\"longitude\":\""+longitude+"\""
+					+ ",\"latitude\":\""+latitude+"\""
+					+ ",\"address\":\""+addr+"\""
+					+ ",\"mac\":\""+mac+"\""
+					+ ",\"machine_key\":\""+machine_key+"\"}";
 			String userAgent = Config.getInstance().getConfig("user-agent") + "";
 			requestPropertys.put("user-agent", userAgent);
 			String ret = HttpUtil.send("post", url, param, requestPropertys, HttpUtil.ENC_UTF_8, cookieManager);

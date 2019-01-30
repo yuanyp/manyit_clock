@@ -5,6 +5,8 @@
 	"machine_key":"ac145e085f2a896",
 	"user-agent":"MANYIT-MobileOA-Android",
 	"quartz-con":"0 0/1 8,18 * * ?",
-	"base-path":"https://oa.many-it.com/MANYIT/",
+	"base-path":"http://test.many-it.com/demo12/",
 	"random":"40",
+	"kq_type":"wifi",
+	"mac":"80:AD:16:EB:5D:5D"
 }

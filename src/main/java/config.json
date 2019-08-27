@@ -1,12 +1,13 @@
 {
-	"longitude":"121.42449600000000",
-	"latitude":"31.22365500000000",
-	"address":"中国上海市长宁区长宁路1027号",
+	"longitude":"121.467198",
+	"latitude":"31.208548",
+	"address":"中国上海市徐汇区肇嘉浜路333号1502室",
 	"machine_key":"ac145e085f2a896",
 	"user-agent":"MANYIT-MobileOA-Android",
 	"quartz-con":"0 0/1 8,18 * * ?",
-	"base-path":"http://test.many-it.com/demo12/",
+	"base-path":"https://oa.many-it.com/MANYIT/",
 	"random":"40",
-	"kq_type":"wifi",
-	"mac":"80:AD:16:EB:5D:5D"
+	"kq_type":"gps",
+	"mac":"80:AD:16:EB:5D:5D",
+	"baidu_api_ak":"gRjI6MrGceP8VaT4hGUMP1WBzqZ1IZbl"
 }

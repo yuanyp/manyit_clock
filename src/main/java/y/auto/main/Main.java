@@ -21,6 +21,7 @@ import org.quartz.TriggerBuilder;
 
 import com.google.gson.Gson;
 
+import net.sf.json.JSONObject;
 import y.auto.entity.ClockInfo;
 import y.auto.entity.UserInfo;
 import y.auto.job.Job;
@@ -222,14 +223,14 @@ public class Main {
 		try {
 			System.out.println("发送请求执行打卡,当前时间" + getNow());
 			String url = basePath + "mobile/kq/mobilesignwork";
-			String address = Config.getInstance().getConfig("address") + "";
-			System.out.println(address);
 			String longitude = Config.getInstance().getConfig("longitude") + "";
+			longitude = xy(longitude);
 			String latitude = Config.getInstance().getConfig("latitude") + "";
+			latitude = xy(latitude);
 			String machine_key = Config.getInstance().getConfig("machine_key") + "";
 			String kq_type = Config.getInstance().getConfig("kq_type") + "";
 			String mac = Config.getInstance().getConfig("mac") + "";
-			String addr = address;
+			String addr = getAddress(longitude,latitude);
 			String param = "mobileinfo={\"type\":\""+kq_type+"\""
 					+ ",\"longitude\":\""+longitude+"\""
 					+ ",\"latitude\":\""+latitude+"\""
@@ -238,6 +239,7 @@ public class Main {
 					+ ",\"machine_key\":\""+machine_key+"\"}";
 			String userAgent = Config.getInstance().getConfig("user-agent") + "";
 			requestPropertys.put("user-agent", userAgent);
+			System.out.println("post: " +param);
 			String ret = HttpUtil.send("post", url, param, requestPropertys, HttpUtil.ENC_UTF_8, cookieManager);
 			Gson gson = new Gson();
 			Map<String,Object> info = gson.fromJson(ret, Map.class);
@@ -247,6 +249,39 @@ public class Main {
 		}
 		return false;
 	}
+	
+	/**
+	 * 根据经纬度，获取地址
+	 * @param longitude
+	 * @param latitude
+	 * @return
+	 */
+	public static String getAddress(String longitude,String latitude) {
+		String baidu_api_ak = Config.getInstance().getConfig("baidu_api_ak") + "";
+		String location = latitude + "," + longitude;
+		String postUrl = "http://api.map.baidu.com/reverse_geocoding/v3/?ak="+baidu_api_ak+"&output=json&coordtype=bd09ll&location=" + location;
+		String ret = HttpUtil.sendGet(postUrl, "", HttpUtil.ENC_UTF_8);
+		JSONObject json = JSONObject.fromObject(ret);
+		JSONObject result = (JSONObject) json.get("result");
+		String address = Config.getInstance().getConfig("address") + "";
+		if(null != result){
+			address = result.getString("formatted_address");
+		}
+		System.out.println(address + ",getAddress " + ret);
+		return address;
+	}
+	
+	public static String xy(String p) {
+		if(StringUtils.isNotBlank(p)) {
+			p = p.substring(0, p.length() -3);
+		}
+		Random random = new Random();
+		int ends = random.nextInt(999);
+		String a = String.format("%03d",ends);
+		String ret = p + a;
+		return ret;
+	}
+	
 	
 	/**
 	 * 初始化机器人

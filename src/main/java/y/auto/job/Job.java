@@ -2,6 +2,8 @@ package y.auto.job;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobExecutionContext;
@@ -14,27 +16,20 @@ import y.auto.util.Config;
 import y.auto.util.HolidayUtil;
 
 public class Job implements org.quartz.Job{
-	
+
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		System.out.println("机器人开始执行...【"+Main.getNow()+"】");
 		String nowDate = Main.getNowDate("YYYYMMdd");
 		int week = HolidayUtil.isWorkDay(nowDate);
 		if(week != 0) {
-			System.out.println("不是工作日，不打卡【"+nowDate+"】");	
+			System.out.println("不是工作日，不打卡【"+nowDate+"】");
 			return;
 		}
-		int random = Integer.parseInt(Config.getInstance().getConfig("random") + "");
-		String start = Main.getRandom(random) + "";
-		String end = Main.getRandom(random) + "";
-		if(start.length() < 2) {
-			start = "0" + start;
-		}
-		if(end.length() < 2) {
-			end = "0" + end;
-		}
+        String start = getStart();
+		String end = getEnd();
 		if(StringUtils.isBlank(UserInfo.start)) {
 			//设置打卡时间
-			UserInfo.start = start;
+			UserInfo.start = getStart();
 			System.out.println(nowDate+"的签到时间预计为：" + start);
 		}
 		if(StringUtils.isBlank(UserInfo.end)) {
@@ -68,7 +63,7 @@ public class Job implements org.quartz.Job{
 
 	/**
 	 * 判断当前日期是星期几
-	 * 
+	 *
 	 * @param pTime
 	 *            修要判断的时间
 	 * @return dayForWeek 判断结果
@@ -91,5 +86,68 @@ public class Job implements org.quartz.Job{
 		}
 		return -1;
 	}
-	
+
+    /**
+     * 判断是和上午还是下午（结果为“0”是上午 结果为“1”是下午）
+     *
+     * @return
+     */
+    public static int amOrpm() {
+        GregorianCalendar ca = new GregorianCalendar();
+        return ca.get(GregorianCalendar.AM_PM);
+    }
+
+
+    /**
+     * 范围取随机数
+     *
+     * @return
+     */
+    public static int getRandom(int min, int max) {
+        int ran2 = (int) (Math.random() * (max - min) + min);
+        return ran2;
+    }
+
+    public static String[] getRandomConfig(int index) {
+        String random = Config.getInstance().getConfig("random") + "";
+        if (StringUtils.isNotBlank(random)) {
+            return random.split(",")[index].split("-");
+        }
+        return null;
+    }
+
+    public static String[] getStartConfig() {
+        return getRandomConfig(0);
+    }
+
+    public static String[] getEndConfig() {
+        return getRandomConfig(1);
+    }
+
+    public static String getEnd() {
+        String[] endConfig = getEndConfig();
+        int r = amOrpm();
+        String end = "30";
+        if (r == 0) {//上午
+        } else {//下午
+            end = getRandom(Integer.parseInt(endConfig[0]), Integer.parseInt(endConfig[1])) + "";
+        }
+        if (end.length() < 2) {
+            end = "0" + end;
+        }
+        return end;
+    }
+
+    public static String getStart() {
+        String[] startConfig = getStartConfig();
+        int r = amOrpm();
+        String start = "01";
+        if (r == 0) {//上午
+            start = getRandom(Integer.parseInt(startConfig[0]), Integer.parseInt(startConfig[1])) + "";
+        }
+        if (start.length() < 2) {
+            start = "0" + start;
+        }
+        return start;
+    }
 }

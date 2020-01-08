@@ -6,8 +6,8 @@
   <description>自动打卡</description>
   
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>gbk</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>gbk</project.reporting.outputEncoding>
         <quartz.version>2.2.1</quartz.version>
     </properties>
 	 <dependencies>
@@ -58,8 +58,31 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
-					<encoding>utf-8</encoding>
+					<encoding>gbk</encoding>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>y.auto.main.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>assembly</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

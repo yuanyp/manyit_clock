@@ -127,7 +127,6 @@ public class Main {
 			System.out.print("Password: ");
 			pass = scanner.nextLine();	
 		}while(StringUtils.isBlank(pass));
-		System.out.print("URL: ");
 		//µÇÂ¼
 		if(!Login(name,pass)) {
 			System.out.println("µÇÂ¼Ê§°Ü");
@@ -200,20 +199,6 @@ public class Main {
 			return "0".equals(code) || "0.0".equals(code) || info.containsKey("LOGINNAME");
 		}
 	}
-	
-	/**
-	 * (1-60È¡Ëæ»úÊý)
-	 * @return
-	 */
-	public static int getRandom(int condition) {
-		Random random = new Random();
-		int num = random.nextInt(60);
-		if(num < condition) {
-			return getRandom(condition);
-		}
-		return num;
-	}
-	
 
 	/**
 	 * ·¢ËÍÇëÇóÖ´ÐÐÇ©µ½ºÍÇ©ÍË

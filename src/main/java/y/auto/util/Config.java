@@ -3,14 +3,15 @@ package y.auto.util;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Config {
     
-    private static Logger logger = Logger.getLogger(Config.class);
+    private static Logger logger = LoggerFactory.getLogger(Config.class);
     
     private static JSONObject config;
     

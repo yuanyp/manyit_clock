@@ -1,13 +1,13 @@
 {
-	"longitude":"121.467198",
-	"latitude":"31.208548",
-	"address":"中国上海市徐汇区肇嘉浜路333号1502室",
-	"machine_key":"ac145e085f2a896",
+	"longitude":"121.539091",
+	"latitude":"31.228053",
+	"address":"上海市浦东新区浦电路417号",
+	"machine_key":"abed4c62fb9c20a",
 	"user-agent":"MANYIT-MobileOA-Android",
-	"quartz-con":"0 0/1 8,18 * * ?",
-	"base-path":"https://oa.many-it.com/MANYIT/",
-	"random":"40",
+	"quartz-con":"0 0/1 8,17 * * ?",
+	"base-path":"https://xxxxxxx/",
+	"random":"10-30,30-50",
 	"kq_type":"gps",
-	"mac":"80:AD:16:EB:5D:5D",
+	"mac":"71:DD:TT:YH:DD:87",
 	"baidu_api_ak":"gRjI6MrGceP8VaT4hGUMP1WBzqZ1IZbl"
 }

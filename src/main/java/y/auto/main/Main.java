@@ -270,7 +270,7 @@ public class Main {
 	
 	/**
 	 * 初始化机器人
-	 * @param cron
+	 * @param cron1
 	 * @throws Exception
 	 */
 	public static void runJob(String cron1) throws Exception {

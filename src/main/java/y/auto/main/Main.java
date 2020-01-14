@@ -37,7 +37,8 @@ public class Main {
 	
 	public static CookieManager cookieManager;
 	public static Map<String, Object> requestPropertys;
-	
+
+
 	/**
 	 * 登录
 	 * @param name
@@ -160,7 +161,7 @@ public class Main {
 	}
 	
 	public static String getNowDate(String format) {
-		if(org.apache.commons.lang.StringUtils.isBlank(format)) {
+		if(StringUtils.isBlank(format)) {
 			format = "YYYY-MM-dd";
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -191,7 +192,7 @@ public class Main {
 		if(null == info && info.size() <=0) {
 			return false;
 		}else {
-			System.out.println("接口返回信息：" + info);
+			//System.out.println("接口返回信息：" + info);
 			String code = obj2Str(info.get("_returncode_"));
 			if(StringUtils.isBlank(code)) {
 				code = obj2Str(info.get("errcode"));

@@ -1,13 +1,15 @@
 {
 	"longitude":"121.539091",
 	"latitude":"31.228053",
-	"address":"上海市浦东新区浦电路417号",
+	"address":"地址",
 	"machine_key":"abed4c62fb9c20a",
-	"user-agent":"MANYIT-MobileOA-Android",
+	"user-agent":"MobileOA-Android",
 	"quartz-con":"0 0/1 8,17 * * ?",
-	"base-path":"https://xxxxxxx/",
-	"random":"10-30,30-50",
+	"base-path":"xxxxx",
+	"random":"20-40,30-50",
 	"kq_type":"gps",
 	"mac":"71:DD:TT:YH:DD:87",
-	"baidu_api_ak":"gRjI6MrGceP8VaT4hGUMP1WBzqZ1IZbl"
+	"baidu_api_ak":"gRjI6MrGceP8VaT4hGUMP1WBzqZ1IZbl",
+	"mailName":"",
+	"mailPassWord":""
 }

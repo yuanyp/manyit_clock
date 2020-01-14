@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -14,15 +15,35 @@ import y.auto.entity.UserInfo;
 import y.auto.main.Main;
 import y.auto.util.Config;
 import y.auto.util.HolidayUtil;
+import y.auto.util.Mail;
 
 public class Job implements org.quartz.Job {
 
+    private static String MAIL_USERNAME=Config.getInstance().getConfig("mailName") + "";
+    private static String MAIL_PASSWORD=Config.getInstance().getConfig("mailPassWord") + "";
+    private boolean SEND = true;
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        System.out.println("机器人开始执行...【" + Main.getNow() + "】签到时间：" + UserInfo.start + ",签退时间：" + UserInfo.end);
+
+        System.out.println("机器人开始执行...");
         String nowDate = Main.getNowDate("YYYYMMdd");
-        int week = HolidayUtil.isWorkDay(nowDate);
+
+        if(!UserInfo.today.equals(nowDate)){
+            UserInfo.today=nowDate;
+            UserInfo.start = "";
+            UserInfo.end = "";
+        }
+        
+        SEND = Mail.resceive(MAIL_USERNAME,MAIL_PASSWORD,nowDate);
+        if(!SEND){
+            System.out.println("邮箱有任务【"+nowDate+"】无需打卡");
+            return;
+        }
+
+        //int week = HolidayUtil.isWorkDay(nowDate);
+        int week = HolidayUtil.isWorkDay_(nowDate);
         if (week != 0) {
-            System.out.println("不是工作日，不打卡【" + nowDate + "】");
+            //System.out.println("不是工作日，不打卡【" + nowDate + "】");
+            System.out.println("无打卡任务，不打卡【" + nowDate + "】");
             return;
         }
         String start = getStart();
@@ -30,35 +51,49 @@ public class Job implements org.quartz.Job {
         if (StringUtils.isBlank(UserInfo.start)) {
             //设置打卡时间
             UserInfo.start = start;
-            System.out.println(nowDate + "的签到时间预计为：" + start);
+            //System.out.println(nowDate + "的签到时间预计为：" + start);
         }
         if (StringUtils.isBlank(UserInfo.end)) {
             UserInfo.end = end;
-            System.out.println(nowDate + "的签退时间预计为：" + end);
+            //System.out.println(nowDate + "的签退时间预计为：" + end);
         }
+
+
         //登录
         try {
             String now = Main.getNowMinutes();
             if (UserInfo.start.equals(now) || UserInfo.end.equals(now)) {
+                System.out.println("=======================================================================");
                 if (!Main.Login(UserInfo.userName, UserInfo.password)) {
                     System.out.println("登录失败");
                     return;
                 }
                 System.out.println("登录成功..");
+
                 ClockInfo clock = Main.getUserApplyNo();
-                Main.executeClock(clock);
+
+                //判断上下午
+                int amOrpm = amOrpm();
+                boolean swdk = (StringUtils.isBlank(clock.getKqStartTime()) && amOrpm == 0);
+                boolean xwdk = (amOrpm == 1);
+                if(swdk || xwdk){
+                    Main.executeClock(clock);
+                    if(swdk){
+                        System.out.println("上午打卡完成："+UserInfo.start);
+                    }
+
+                    if(xwdk){
+                        System.out.println("下午打卡完成："+UserInfo.end);
+                    }
+                }
                 Main.logout();
-                if (UserInfo.start.equals(now)) {
-                    UserInfo.start = "";
-                }
-                if (UserInfo.end.equals(now)) {
-                    UserInfo.end = "";
-                }
+                System.out.println("=======================================================================");
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
     }
 
     /**
@@ -103,7 +138,7 @@ public class Job implements org.quartz.Job {
      * @return
      */
     public static int getRandom(int min, int max) {
-        int ran2 = (int) (Math.random() * (max - min) + min);
+        int ran2 = (int) (min+Math.random() * (max - min+1));
         return ran2;
     }
 
@@ -126,13 +161,10 @@ public class Job implements org.quartz.Job {
     public static String getEnd() {
         String[] endConfig = getEndConfig();
         int r = amOrpm();
-        String end = "30";
+        String end = "";
         if (r == 0) {//上午
         } else {//下午
             end = getRandom(Integer.parseInt(endConfig[0]), Integer.parseInt(endConfig[1])) + "";
-        }
-        if (end.length() < 2) {
-            end = "0" + end;
         }
         return end;
     }
@@ -140,12 +172,9 @@ public class Job implements org.quartz.Job {
     public static String getStart() {
         String[] startConfig = getStartConfig();
         int r = amOrpm();
-        String start = "01";
+        String start = "";
         if (r == 0) {//上午
             start = getRandom(Integer.parseInt(startConfig[0]), Integer.parseInt(startConfig[1])) + "";
-        }
-        if (start.length() < 2) {
-            start = "0" + start;
         }
         return start;
     }

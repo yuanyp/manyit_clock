@@ -12,6 +12,11 @@ public class UserInfo {
 	 * 密码
 	 */
 	public static String password;
+
+	/**
+	 * 预计打卡日期
+	 */
+	public static String today="";
 	
 	/**
 	 * 预计打卡开始时间

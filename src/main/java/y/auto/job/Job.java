@@ -24,7 +24,7 @@ public class Job implements org.quartz.Job {
     private boolean SEND = true;
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
-        System.out.println("机器人开始执行...");
+        //System.out.println("机器人开始执行...");
         String nowDate = Main.getNowDate("YYYYMMdd");
 
         if(!UserInfo.today.equals(nowDate)){
@@ -32,7 +32,7 @@ public class Job implements org.quartz.Job {
             UserInfo.start = "";
             UserInfo.end = "";
         }
-        
+
         SEND = Mail.resceive(MAIL_USERNAME,MAIL_PASSWORD,nowDate);
         if(!SEND){
             System.out.println("邮箱有任务【"+nowDate+"】无需打卡");
@@ -40,10 +40,10 @@ public class Job implements org.quartz.Job {
         }
 
         //int week = HolidayUtil.isWorkDay(nowDate);
-        int week = HolidayUtil.isWorkDay_(nowDate);
+        int week = HolidayUtil.isWorkDay__(nowDate);
         if (week != 0) {
-            //System.out.println("不是工作日，不打卡【" + nowDate + "】");
-            System.out.println("无打卡任务，不打卡【" + nowDate + "】");
+            System.out.println("不是工作日，不打卡【" + nowDate + "】");
+            //System.out.println("无打卡任务，不打卡【" + nowDate + "】");
             return;
         }
         String start = getStart();
@@ -63,7 +63,6 @@ public class Job implements org.quartz.Job {
         try {
             String now = Main.getNowMinutes();
             if (UserInfo.start.equals(now) || UserInfo.end.equals(now)) {
-                System.out.println("=======================================================================");
                 if (!Main.Login(UserInfo.userName, UserInfo.password)) {
                     System.out.println("登录失败");
                     return;
@@ -79,15 +78,16 @@ public class Job implements org.quartz.Job {
                 if(swdk || xwdk){
                     Main.executeClock(clock);
                     if(swdk){
-                        System.out.println("上午打卡完成："+UserInfo.start);
+                        System.out.println("=======================================================================");
+                        System.out.println("上午打卡完成（随机分钟"+UserInfo.start+"）打卡时间："+Main.getNow());
                     }
 
                     if(xwdk){
-                        System.out.println("下午打卡完成："+UserInfo.end);
+                        System.out.println("下午打卡完成（随机分钟"+UserInfo.end+"）打卡时间："+Main.getNow());
+                        System.out.println("=======================================================================");
                     }
                 }
                 Main.logout();
-                System.out.println("=======================================================================");
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block

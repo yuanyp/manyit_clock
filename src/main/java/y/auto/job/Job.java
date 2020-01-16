@@ -61,8 +61,11 @@ public class Job implements org.quartz.Job {
 
         //╣гб╪
         try {
+
+            //еп╤оиообнГ
+            int amOrpm = amOrpm();
             String now = Main.getNowMinutes();
-            if (UserInfo.start.equals(now) || UserInfo.end.equals(now)) {
+            if ((UserInfo.start.equals(now)  && amOrpm == 0) || (UserInfo.end.equals(now) && amOrpm == 1 )) {
                 if (!Main.Login(UserInfo.userName, UserInfo.password)) {
                     System.out.println("╣гб╪й╖╟э");
                     return;
@@ -71,8 +74,7 @@ public class Job implements org.quartz.Job {
 
                 ClockInfo clock = Main.getUserApplyNo();
 
-                //еп╤оиообнГ
-                int amOrpm = amOrpm();
+
                 boolean swdk = (StringUtils.isBlank(clock.getKqStartTime()) && amOrpm == 0);
                 boolean xwdk = (amOrpm == 1);
                 if(swdk || xwdk){

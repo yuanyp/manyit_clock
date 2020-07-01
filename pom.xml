@@ -8,7 +8,7 @@
     <properties>
         <project.build.sourceEncoding>gbk</project.build.sourceEncoding>
         <project.reporting.outputEncoding>gbk</project.reporting.outputEncoding>
-        <quartz.version>2.2.1</quartz.version>
+        <quartz.version>2.3.2</quartz.version>
     </properties>
 	 <dependencies>
 		<dependency>
